@@ -319,75 +319,69 @@
     </div>
 
     <script>
-        document.getElementById('registrationForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            // جمع بيانات النموذج
-            const formData = {
-                id: Date.now(), // معرف فريد للمستخدم
-                fullName: document.getElementById('fullName').value,
-                phone: document.getElementById('phone').value,
-                country: document.getElementById('country').value,
-                timestamp: new Date().toISOString()
-            };
-            
-            // التحقق من عدم تكرار رقم الهاتف
-            if (isPhoneRegistered(formData.phone)) {
-                alert("رقم الهاتف مسجل مسبقاً. يرجى استخدام رقم هاتف آخر.");
-                return;
+        // دالة لإنشاء معرف فريد
+        function generateId() {
+            return Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+        }
+
+        // دالة للتحقق من تسجيل رقم الهاتف مسبقاً
+        function isPhoneRegistered(phone) {
+            const participants = JSON.parse(localStorage.getItem('giveawayParticipants')) || [];
+            return participants.some(participant => participant.phone === phone);
+        }
+
+        // دالة لإضافة المسجل إلى قائمة المشاركين
+        function addToParticipantsList(participantData) {
+            try {
+                // جلب القائمة الحالية من localStorage
+                let participants = JSON.parse(localStorage.getItem('giveawayParticipants')) || [];
+                
+                // إضافة المسجل الجديد
+                participants.push(participantData);
+                
+                // حفظ القائمة المحدثة
+                localStorage.setItem('giveawayParticipants', JSON.stringify(participants));
+                
+                console.log('تم إضافة المشارك:', participantData);
+                console.log('إجمالي المشاركين:', participants.length);
+                
+                return true;
+            } catch (error) {
+                console.error('خطأ في حفظ البيانات:', error);
+                return false;
             }
+        }
+
+        // دالة لعرض رسالة نجاح
+        function showSuccessMessage() {
+            document.getElementById('locationPermission').classList.remove('active');
+            document.getElementById('successMessage').classList.add('active');
             
-            // حفظ البيانات في localStorage
-            localStorage.setItem('currentRegistration', JSON.stringify(formData));
+            // إعادة تعيين النموذج
+            document.getElementById('registrationForm').reset();
             
-            // إظهار طلب الإذن بالموقع
-            document.getElementById('locationPermission').classList.add('active');
-            
-            // تمرير إلى الأعلى لرؤية الرسالة
-            document.getElementById('locationPermission').scrollIntoView({ behavior: 'smooth' });
-        });
-        
-        document.getElementById('locationBtn').addEventListener('click', function() {
-            if (navigator.geolocation) {
-                // طلب الموقع بدقة عالية
+            // إخفاء رسالة النجاح بعد 5 ثوان
+            setTimeout(function() {
+                document.getElementById('successMessage').classList.remove('active');
+            }, 5000);
+        }
+
+        // دالة لعرض رسالة خطأ
+        function showError(message) {
+            alert(message);
+        }
+
+        // دالة للحصول على الموقع
+        function getLocation() {
+            return new Promise((resolve, reject) => {
+                if (!navigator.geolocation) {
+                    reject('المتصفح لا يدعم خدمة تحديد الموقع');
+                    return;
+                }
+
                 navigator.geolocation.getCurrentPosition(
-                    function(position) {
-                        // تخزين بيانات الموقع
-                        const locationData = {
-                            latitude: position.coords.latitude,
-                            longitude: position.coords.longitude,
-                            accuracy: position.coords.accuracy,
-                            timestamp: new Date().toISOString()
-                        };
-                        
-                        // جلب بيانات التسجيل
-                        const registrationData = JSON.parse(localStorage.getItem('currentRegistration'));
-                        
-                        // دمج البيانات
-                        const completeData = {
-                            ...registrationData,
-                            location: locationData
-                        };
-                        
-                        // حفظ البيانات الكاملة
-                        localStorage.setItem('currentRegistration', JSON.stringify(completeData));
-                        
-                        // إضافة إلى قائمة المسجلين
-                        addToParticipantsList(completeData);
-                        
-                        // إظهار رسالة النجاح
-                        document.getElementById('locationPermission').classList.remove('active');
-                        document.getElementById('successMessage').classList.add('active');
-                        
-                        // إعادة تعيين النموذج
-                        document.getElementById('registrationForm').reset();
-                        
-                        // إخفاء رسالة النجاح بعد 5 ثوان
-                        setTimeout(function() {
-                            document.getElementById('successMessage').classList.remove('active');
-                        }, 5000);
-                    },
-                    function(error) {
+                    position => resolve(position),
+                    error => {
                         let errorMessage;
                         switch(error.code) {
                             case error.PERMISSION_DENIED:
@@ -402,7 +396,7 @@
                             default:
                                 errorMessage = "حدث خطأ غير معروف أثناء محاولة تحديد الموقع.";
                         }
-                        alert(errorMessage);
+                        reject(errorMessage);
                     },
                     {
                         enableHighAccuracy: true,
@@ -410,40 +404,125 @@
                         maximumAge: 0
                     }
                 );
-            } else {
-                alert("المتصفح لا يدعم خدمة تحديد الموقع. يرجى استخدام متصفح آخر.");
+            });
+        }
+
+        // حدث تقديم النموذج
+        document.getElementById('registrationForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // جمع بيانات النموذج
+            const formData = {
+                id: generateId(),
+                fullName: document.getElementById('fullName').value.trim(),
+                phone: document.getElementById('phone').value.trim(),
+                country: document.getElementById('country').value,
+                timestamp: new Date().toISOString(),
+                ip: await getIPAddress()
+            };
+
+            // التحقق من صحة البيانات
+            if (!formData.fullName || !formData.phone || !formData.country) {
+                showError('يرجى ملء جميع الحقول المطلوبة');
+                return;
+            }
+
+            // التحقق من عدم تكرار رقم الهاتف
+            if (isPhoneRegistered(formData.phone)) {
+                showError("رقم الهاتف مسجل مسبقاً. يرجى استخدام رقم هاتف آخر.");
+                return;
+            }
+
+            // حفظ البيانات المؤقتة
+            localStorage.setItem('pendingRegistration', JSON.stringify(formData));
+            
+            // إظهار طلب الإذن بالموقع
+            document.getElementById('locationPermission').classList.add('active');
+            document.getElementById('locationPermission').scrollIntoView({ behavior: 'smooth' });
+        });
+
+        // حدث الضغط على زر الموقع
+        document.getElementById('locationBtn').addEventListener('click', async function() {
+            const button = this;
+            const originalText = button.innerHTML;
+            
+            // تعطيل الزر أثناء المعالجة
+            button.disabled = true;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري تحديد الموقع...';
+            
+            try {
+                // الحصول على الموقع
+                const position = await getLocation();
+                
+                // جلب بيانات التسجيل المؤقتة
+                const registrationData = JSON.parse(localStorage.getItem('pendingRegistration'));
+                
+                if (!registrationData) {
+                    throw new Error('لا توجد بيانات تسجيل');
+                }
+
+                // إضافة بيانات الموقع
+                const completeData = {
+                    ...registrationData,
+                    location: {
+                        latitude: position.coords.latitude,
+                        longitude: position.coords.longitude,
+                        accuracy: position.coords.accuracy,
+                        timestamp: new Date().toISOString()
+                    }
+                };
+
+                // إضافة إلى قائمة المشاركين
+                const success = addToParticipantsList(completeData);
+                
+                if (success) {
+                    // مسح البيانات المؤقتة
+                    localStorage.removeItem('pendingRegistration');
+                    
+                    // عرض رسالة النجاح
+                    showSuccessMessage();
+                } else {
+                    throw new Error('فشل في حفظ البيانات');
+                }
+                
+            } catch (error) {
+                console.error('Error:', error);
+                showError(error.message || 'حدث خطأ أثناء تحديد الموقع');
+            } finally {
+                // إعادة تمكين الزر
+                button.disabled = false;
+                button.innerHTML = originalText;
             }
         });
-        
-        // دالة للتحقق من تسجيل رقم الهاتف مسبقاً
-        function isPhoneRegistered(phone) {
-            const participants = JSON.parse(localStorage.getItem('giveawayParticipants')) || [];
-            return participants.some(participant => participant.phone === phone);
+
+        // دالة للحصول على عنوان IP
+        async function getIPAddress() {
+            try {
+                const response = await fetch('https://api.ipify.org?format=json');
+                const data = await response.json();
+                return data.ip;
+            } catch (error) {
+                console.error('Error getting IP:', error);
+                return 'غير معروف';
+            }
         }
-        
-        // دالة لإضافة المسجل إلى قائمة المشاركين
-        function addToParticipantsList(participantData) {
-            // جلب القائمة الحالية من localStorage
-            let participants = JSON.parse(localStorage.getItem('giveawayParticipants')) || [];
+
+        // التحقق من وجود بيانات تسجيل معلقة عند تحميل الصفحة
+        document.addEventListener('DOMContentLoaded', function() {
+            const pendingRegistration = localStorage.getItem('pendingRegistration');
+            if (pendingRegistration) {
+                document.getElementById('locationPermission').classList.add('active');
+            }
             
-            // إضافة المسجل الجديد
-            participants.push(participantData);
-            
-            // حفظ القائمة المحدثة
-            localStorage.setItem('giveawayParticipants', JSON.stringify(participants));
-            
-            // تحديث العداد
+            // تحديث عداد المسجلين
             updateParticipantsCounter();
-        }
-        
+        });
+
         // دالة لتحديث عداد المسجلين
         function updateParticipantsCounter() {
             const participants = JSON.parse(localStorage.getItem('giveawayParticipants')) || [];
-            // يمكنك إضافة عداد في الواجهة إذا أردت
+            console.log('عدد المسجلين الحالي:', participants.length);
         }
-        
-        // تحديث العداد عند تحميل الصفحة
-        document.addEventListener('DOMContentLoaded', updateParticipantsCounter);
     </script>
 </body>
 </html>
