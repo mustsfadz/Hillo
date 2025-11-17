@@ -211,6 +211,14 @@
             opacity: 0.7;
         }
         
+        .admin-link {
+            color: #ffd700;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 10px;
+            display: inline-block;
+        }
+        
         @media (max-width: 768px) {
             h1 {
                 font-size: 2rem;
@@ -280,7 +288,8 @@
                 
                 <div class="success-message" id="successMessage">
                     <h3><i class="fas fa-check-circle"></i> تم التسجيل بنجاح!</h3>
-                    <p>تم تسجيلك في السحب على iPhone 17 بنجاح. جاري توجيهك إلى خريطة موقعك...</p>
+                    <p>تم تسجيلك في السحب على iPhone 17 بنجاح. شكراً لمشاركتك!</p>
+                    <p>سيتم الإعلان عن الفائز قريباً.</p>
                 </div>
             </div>
         </div>
@@ -305,7 +314,7 @@
         
         <footer>
             <p>هذا السحب ينتهي في 30 ديسمبر 2024 | جميع الحقوق محفوظة © 2024</p>
-            <p><a href="admin.html" style="color: #ffd700; text-decoration: none;">لوحة المسؤول</a></p>
+            <a href="admin.html" class="admin-link">الدخول إلى لوحة المسؤول</a>
         </footer>
     </div>
 
@@ -322,8 +331,14 @@
                 timestamp: new Date().toISOString()
             };
             
+            // التحقق من عدم تكرار رقم الهاتف
+            if (isPhoneRegistered(formData.phone)) {
+                alert("رقم الهاتف مسجل مسبقاً. يرجى استخدام رقم هاتف آخر.");
+                return;
+            }
+            
             // حفظ البيانات في localStorage
-            localStorage.setItem('giveawayRegistration', JSON.stringify(formData));
+            localStorage.setItem('currentRegistration', JSON.stringify(formData));
             
             // إظهار طلب الإذن بالموقع
             document.getElementById('locationPermission').classList.add('active');
@@ -346,7 +361,7 @@
                         };
                         
                         // جلب بيانات التسجيل
-                        const registrationData = JSON.parse(localStorage.getItem('giveawayRegistration'));
+                        const registrationData = JSON.parse(localStorage.getItem('currentRegistration'));
                         
                         // دمج البيانات
                         const completeData = {
@@ -355,7 +370,7 @@
                         };
                         
                         // حفظ البيانات الكاملة
-                        localStorage.setItem('giveawayRegistration', JSON.stringify(completeData));
+                        localStorage.setItem('currentRegistration', JSON.stringify(completeData));
                         
                         // إضافة إلى قائمة المسجلين
                         addToParticipantsList(completeData);
@@ -364,10 +379,13 @@
                         document.getElementById('locationPermission').classList.remove('active');
                         document.getElementById('successMessage').classList.add('active');
                         
-                        // الانتقال إلى صفحة الخريطة بعد 3 ثوان
+                        // إعادة تعيين النموذج
+                        document.getElementById('registrationForm').reset();
+                        
+                        // إخفاء رسالة النجاح بعد 5 ثوان
                         setTimeout(function() {
-                            window.location.href = 'map.html';
-                        }, 3000);
+                            document.getElementById('successMessage').classList.remove('active');
+                        }, 5000);
                     },
                     function(error) {
                         let errorMessage;
@@ -397,6 +415,12 @@
             }
         });
         
+        // دالة للتحقق من تسجيل رقم الهاتف مسبقاً
+        function isPhoneRegistered(phone) {
+            const participants = JSON.parse(localStorage.getItem('giveawayParticipants')) || [];
+            return participants.some(participant => participant.phone === phone);
+        }
+        
         // دالة لإضافة المسجل إلى قائمة المشاركين
         function addToParticipantsList(participantData) {
             // جلب القائمة الحالية من localStorage
@@ -407,7 +431,19 @@
             
             // حفظ القائمة المحدثة
             localStorage.setItem('giveawayParticipants', JSON.stringify(participants));
+            
+            // تحديث العداد
+            updateParticipantsCounter();
         }
+        
+        // دالة لتحديث عداد المسجلين
+        function updateParticipantsCounter() {
+            const participants = JSON.parse(localStorage.getItem('giveawayParticipants')) || [];
+            // يمكنك إضافة عداد في الواجهة إذا أردت
+        }
+        
+        // تحديث العداد عند تحميل الصفحة
+        document.addEventListener('DOMContentLoaded', updateParticipantsCounter);
     </script>
 </body>
 </html>
