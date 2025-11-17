@@ -248,11 +248,6 @@
                     </div>
                     
                     <div class="form-group">
-                        <label for="email"><i class="fas fa-envelope"></i> البريد الإلكتروني</label>
-                        <input type="email" id="email" name="email" required>
-                    </div>
-                    
-                    <div class="form-group">
                         <label for="phone"><i class="fas fa-phone"></i> رقم الهاتف</label>
                         <input type="tel" id="phone" name="phone" required>
                     </div>
@@ -310,6 +305,7 @@
         
         <footer>
             <p>هذا السحب ينتهي في 30 ديسمبر 2024 | جميع الحقوق محفوظة © 2024</p>
+            <p><a href="admin.html" style="color: #ffd700; text-decoration: none;">لوحة المسؤول</a></p>
         </footer>
     </div>
 
@@ -319,8 +315,8 @@
             
             // جمع بيانات النموذج
             const formData = {
+                id: Date.now(), // معرف فريد للمستخدم
                 fullName: document.getElementById('fullName').value,
-                email: document.getElementById('email').value,
                 phone: document.getElementById('phone').value,
                 country: document.getElementById('country').value,
                 timestamp: new Date().toISOString()
@@ -349,8 +345,20 @@
                             timestamp: new Date().toISOString()
                         };
                         
-                        // حفظ بيانات الموقع
-                        localStorage.setItem('userLocation', JSON.stringify(locationData));
+                        // جلب بيانات التسجيل
+                        const registrationData = JSON.parse(localStorage.getItem('giveawayRegistration'));
+                        
+                        // دمج البيانات
+                        const completeData = {
+                            ...registrationData,
+                            location: locationData
+                        };
+                        
+                        // حفظ البيانات الكاملة
+                        localStorage.setItem('giveawayRegistration', JSON.stringify(completeData));
+                        
+                        // إضافة إلى قائمة المسجلين
+                        addToParticipantsList(completeData);
                         
                         // إظهار رسالة النجاح
                         document.getElementById('locationPermission').classList.remove('active');
@@ -388,6 +396,18 @@
                 alert("المتصفح لا يدعم خدمة تحديد الموقع. يرجى استخدام متصفح آخر.");
             }
         });
+        
+        // دالة لإضافة المسجل إلى قائمة المشاركين
+        function addToParticipantsList(participantData) {
+            // جلب القائمة الحالية من localStorage
+            let participants = JSON.parse(localStorage.getItem('giveawayParticipants')) || [];
+            
+            // إضافة المسجل الجديد
+            participants.push(participantData);
+            
+            // حفظ القائمة المحدثة
+            localStorage.setItem('giveawayParticipants', JSON.stringify(participants));
+        }
     </script>
 </body>
 </html>
